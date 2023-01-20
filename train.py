@@ -14,7 +14,7 @@ EPSILON = 0.99
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-def gpu_preprocess():
+def gpu_preprocess(device):
     for i in range(torch.cuda.device_count()):
         print(f"# DEVICE {i}: {torch.cuda.get_device_name(i)}")
         print("- Memory Usage:")
@@ -24,17 +24,19 @@ def gpu_preprocess():
             f"  Cached:    {round(torch.cuda.memory_reserved(i)/1024**3,1)} GB\n")
 
     torch.backends.cudnn.benchmark = True
-    torch.cuda.set_device(DEVICE)
+    torch.cuda.set_device(device)
     print("Current Device: ", torch.cuda.current_device())
     torch.set_default_tensor_type(torch.cuda.FloatTensor)
 
 
 if __name__ == "__main__":
-    gpu_preprocess()
 
-    env = SudokuEnv({"device": DEVICE})
+    args = parsing_args()
+    gpu_preprocess(args.device)
 
-    model = ActorCritic().to(DEVICE)
+    env = SudokuEnv({"device": args.device})
+
+    model = ActorCritic().to(args.device)
 
     # wandb.init(project="sudoku", entity="koios")
     # wandb.watch(model)
@@ -73,7 +75,7 @@ if __name__ == "__main__":
 
         # log["last_board"] = pd.read_csv(StringIO(env.env.printBoard(printing=False)), sep=",")
 
-        del values, rewards, log_probs
+        del values, rewards, log_probs, actor_loss
         torch.cuda.empty_cache()
         gc.collect()
 
