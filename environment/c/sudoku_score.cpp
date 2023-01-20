@@ -14,9 +14,9 @@ extern "C" {
         for (i = 0; i < 9; i++) {
             for (j = 0; j < 9; j++) {
                 if (sudoku[i][j][0])
-                    rtotal[sudoku[i][j][0]-1] = 1;
+                    rtotal[j] = 1;
                 if (sudoku[j][i][0])
-                    ctotal[sudoku[j][i][0]-1] = 1;                
+                    ctotal[j] = 1;                
             }
             
             rsum=0;
@@ -34,14 +34,14 @@ extern "C" {
             if (csum == 9)
                 score += 1;
         }
+
         for (i=0; i<3; i++) {
             for (j=0; j<3; j++) {
 
                 for (int k=0; k<3; k++) {
                     for (int l=0; l<3; l++) {
                         if (sudoku[i*3+k][j*3+l][0])
-                            ztotal[sudoku[i*3+k][j*3+l][0]-1] = 1;
-                     
+                            ztotal[k*3+l] = 1;
                     }
                 }
 
@@ -50,12 +50,12 @@ extern "C" {
                     zsum += ztotal[k];
                     ztotal[k]=0;
                 }
-                if (zsum == 9) {
-
+                if (zsum == 9)
                     score += 1;
-                }
+                    
             }
         }
+
         return score;
     }
 }
