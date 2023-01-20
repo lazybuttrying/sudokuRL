@@ -1,0 +1,7 @@
+
+*wandb*
+./asset/*
+*.pth
+*/__pycache__/*
+*.so
+*/test.*

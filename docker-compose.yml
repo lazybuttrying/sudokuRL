@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  ai:
+    build: .
+          #image: sudoku:0.0.0
+    deploy:
+      resources:
+              reservations:
+                      devices:
+                           - driver: nvidia
+                             count: all
+                             capabilities: [gpu]
+    volumes:
+      - ./asset:/workspace/asset
+#       - type: bind
+#         source: ./asset
+#         target: /workspace/asset
+
+# volumes:
+#   asset:
