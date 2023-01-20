@@ -73,23 +73,11 @@ class Sudoku:
     def updateBoard(self, value) -> bool:
         x, y, value = value["x"], value["y"], value["v"]+1
 
-        # if not (0 <= x < 9 and 0 <= y < 9 and 0 < value < 10):
-        #     # print("Wrong input. Try Again")
-        #     return False
-        # print(self.fixed[x][y])
         if self.fixed[x][y]:
             return False
 
         self.board[x][y] = value
         return True
-
-    # def emptyCell(self):
-    #     empty = 0
-    #     for i in range(9):
-    #         for j in range(9):
-    #             if self.board[i][j] == 0:
-    #                 empty += 1
-    #     return empty
 
     def calcScore(self):
         return c.calc_score(

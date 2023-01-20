@@ -24,12 +24,16 @@ class SudokuEnv(gym.Env):
         self.left_times -= 1
         changed = self.env.updateBoard(action)
         state = self.env.board
+        score = 0
+        if not changed:
+            reward = -1
+        else:
+            score = self.env.calcScore()
+            reward = score/27.0 if score else -0.5
 
-        score = self.env.calcScore()
-        reward = (score/27.0 if score else -0.5) if changed else -1
         truncated = self.left_times <= 0
         done = reward == 1
-        info = {}
+        info = {"score": score}
         return state, reward, truncated, done, info
 
     def reset(self, type=None):
