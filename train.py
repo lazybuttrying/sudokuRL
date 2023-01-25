@@ -9,9 +9,17 @@ import random
 import wandb
 
 
-EPOCH = 99999
-EPSILON = 0.99
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+def parsing_args():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--device", type=str, default="cpu")
+    parser.add_argument("--epoch", type=int, default=90000)
+    parser.add_argument("--epsilon", type=float, default=0.99)
+
+    args = parser.parse_args()
+    args.device = torch.device(
+        "cuda:0" if torch.cuda.is_available() else "cpu")
+    return args
 
 
 def gpu_preprocess(device):
@@ -38,29 +46,24 @@ if __name__ == "__main__":
 
     model = ActorCritic().to(args.device)
 
-    # wandb.init(project="sudoku", entity="koios")
-    # wandb.watch(model)
+    wandb.init(project="sudoku", entity="koios")
+    wandb.watch(model)
 
     state = env.reset()
-    best = -500
-    for ep in range(EPOCH):
-        if best > 100:
-            print("Well Done!")
-            break
-
+    loss = 9999999
+    for ep in range(args.epoch):
         log = {
-            "total_loss": [],
-            "actor_loss_x": [],
-            "actor_loss_y": [],
-            "actor_loss_v": [],
-            "critic_loss": [],
-            "length": [],
-            "reward": [],
-            "best": best
+            # "total_loss": [],
+            # "actor_loss_x": [],
+            # "actor_loss_y": [],
+            # "actor_loss_v": [],
+            # "critic_loss": [],
+            # "length": [],
+            # "reward": [],
         }
 
         values, log_probs, rewards = run_episode(env, model,
-                                                 {"epsilon": EPSILON})
+                                                 {"epsilon": args.epsilon})
 
         log["total_loss"], actor_loss, log["critic_loss"] = update_params(
             model.optimizer, values, log_probs, rewards,
@@ -79,12 +82,13 @@ if __name__ == "__main__":
         torch.cuda.empty_cache()
         gc.collect()
 
-        if log["reward"] > log["best"]:
+        if loss > log["total_loss"]:
             torch.save(model.state_dict(),
-                       f"./asset/model_{ep}_{log['best']}.pth")
-            log["best"] = log["reward"]
+                       f"./asset/model_{ep}_{log['total_loss']}.pth")
+            loss = log["total_loss"]
 
-        # wandb.log(log, step=ep)
-        best = log["best"]
+        wandb.log(log, step=ep)
+        torch.save(model.state_dict(),
+                   f"./asset/model_last.pth")
         del log
         gc.collect()
