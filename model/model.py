@@ -24,8 +24,6 @@ class ActorCritic(nn.Module):
         self.l3 = nn.Linear(3276, 81)
         self.critic_fc1 = nn.Linear(81, 1)
 
-        # self.softmax = F.log_softmax(dim=0)
-
         self.optimizer = torch.optim.RAdam(
             self.parameters(), lr=self.step_size,)
         # weight_decay=1e-5)

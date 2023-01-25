@@ -3,7 +3,7 @@ import torch
 import numpy as np
 from environment.board import Sudoku
 
-LEFT_TIMES = 200
+LEFT_TIMES = 500
 
 
 class SudokuEnv(gym.Env):
@@ -26,10 +26,14 @@ class SudokuEnv(gym.Env):
         state = self.env.board
 
         score = self.env.calcScore()
-        reward = (score/27.0 if score else -0.5) if changed else -1
+        reward = score/27.0 if score else -0.01
         truncated = self.left_times <= 0
+        if not changed:
+            reward = -1
+            truncated = True
+
         done = reward == 1
-        info = {}
+        info = {"score": score}
         return state, reward, truncated, done, info
 
     def reset(self, type=None):

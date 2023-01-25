@@ -1,4 +1,5 @@
 import torch
+import pickle
 from random import sample
 from copy import deepcopy
 import ctypes
@@ -25,10 +26,19 @@ class Sudoku:
     def reset(self, type=None):
         if type == "weak":
             self.board = self.fixed.clone()
+        elif type == "infer":
+            with open("environment/data/board_answer.pkl", "rb") as f:
+                self.answer = pickle.load(f)
+            with open("environment/data/board_fixed.pkl", "rb") as f:
+                self.fixed = pickle.load(f)
+            self.board = self.fixed.clone()
         else:
             self.generateAns()
             self.generateQue()
-            # self.printBoard()
+            with open("environment/data/board_answer.pkl", "wb") as f:
+                pickle.dump(self.answer, f)
+            with open("environment/data/board_fixed.pkl", "wb") as f:
+                pickle.dump(self.fixed, f)
         return self.fixed
 
     def generateAns(self):
@@ -73,42 +83,17 @@ class Sudoku:
     def updateBoard(self, value) -> bool:
         x, y, value = value["x"], value["y"], value["v"]+1
 
-        # if not (0 <= x < 9 and 0 <= y < 9 and 0 < value < 10):
-        #     # print("Wrong input. Try Again")
-        #     return False
-        # print(self.fixed[x][y])
         if self.fixed[x][y]:
             return False
 
         self.board[x][y] = value
         return True
 
-    # def emptyCell(self):
-    #     empty = 0
-    #     for i in range(9):
-    #         for j in range(9):
-    #             if self.board[i][j] == 0:
-    #                 empty += 1
-    #     return empty
-
     def calcScore(self):
         return c.calc_score(
             self.board.cpu().numpy().astype(dtype=np.int32).ctypes.data_as(
                 ctypes.POINTER(ctypes.c_int))
         )
-        # score = 0
-        # for i in range(9):
-        #     if len(set(v[0].item() for v in self.board[i])) == 9:
-        #         score += 1
-        #     if len(set(self.board[j][i][0].item() for j in range(9))) == 9:
-        #         score += 1
-
-        # for i in range(3):
-        #     for j in range(3):
-        #         if len(set(self.board[3*i+k][3*j+l][0].item() for k in range(3) for l in range(3))) == 9:
-        #             score += 1
-
-        # return score
 
 
 if __name__ == "__main__":

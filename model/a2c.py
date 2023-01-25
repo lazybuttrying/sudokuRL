@@ -2,7 +2,7 @@ import torch
 import random
 
 
-def update_params(optim, values, log_probs, rewards, clc=0.8, gamma=0.95):
+def update_params(optim, values, log_probs, rewards, clc=3, gamma=0.95):
     rewards = torch.Tensor(rewards).flip(dims=(0,)).view(-1)
     log_probs = {v: torch.stack(log_probs[v]).flip(dims=(0,)).view(-1)
                  for v in ["x", "y", "v"]}
