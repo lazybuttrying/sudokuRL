@@ -49,19 +49,19 @@ class SudokuEnv(gym.Env):
         self.state[2] = self.env.board
         # self.state = torch.stack([self.state, self.env.board], dim=0)[1:]
 
-        score = self.env.calcScore()
-
         truncated = self.left_times <= 0
         # if not changed:
         #     reward = -LEFT_TIMES
         #     truncated = True
 
         done = reward == 1
-        info = {"score": score}
-        return self.state, reward, truncated, done, info
+        return self.state, reward, truncated, done, {}
 
     def reset(self, type=None):
+
         self.left_times = LEFT_TIMES
+        self.x = 0
+        self.y = 0
         self.state = self.env.reset(type=type).expand(3, -1, -1, -1)
 
         return self.state

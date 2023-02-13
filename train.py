@@ -80,10 +80,13 @@ if __name__ == "__main__":
         log["length"] = len(rewards)
         log["reward"] = sum(rewards)
 
-        if 5 < log["length"] < LEFT_TIMES or ep % 100 == 0:
+        if ep % 100 == 0:
+            print(ep)
+            print(rewards)
+            env.env.printBoard(printing=True)
+        elif 3 < log["length"] < LEFT_TIMES:
             print(ep)
             print(log)
-            env.env.printBoard(printing=True)
 
         # log["last_board"] = pd.read_csv(StringIO(env.env.printBoard(printing=False)), sep=",")
 

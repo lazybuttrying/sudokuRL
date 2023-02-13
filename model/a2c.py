@@ -64,7 +64,6 @@ def run_episode(env, model, params, type="weak"):
             #         logits=policy[v].view(-1)).sample()
             #     for v in ["x", "y", "v"]
             # }
-
         state, reward, truncated, done, info = env.step(action)
 
         values.append(value)
