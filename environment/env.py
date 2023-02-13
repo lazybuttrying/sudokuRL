@@ -27,6 +27,8 @@ class SudokuEnv(gym.Env):
 
     def step(self, action):
         self.left_times -= 1
+
+        truncated = self.left_times <= 0
         reward = -0.01
 
         if action == 0:
@@ -43,16 +45,14 @@ class SudokuEnv(gym.Env):
             })
             score = self.env.calcScore()
             reward = score/27.0 if score else -0.01
+            if not changed:
+                reward = -self.left_times
+                truncated = True
 
         self.state[0] = self.state[1]
         self.state[1] = self.state[2]
         self.state[2] = self.env.board
         # self.state = torch.stack([self.state, self.env.board], dim=0)[1:]
-
-        truncated = self.left_times <= 0
-        # if not changed:
-        #     reward = -LEFT_TIMES
-        #     truncated = True
 
         done = reward == 1
         return self.state, reward, truncated, done, {}
