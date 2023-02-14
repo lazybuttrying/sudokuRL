@@ -8,9 +8,9 @@ import torch
 class ActorCritic(nn.Module):
     def __init__(self) -> None:
         super(ActorCritic, self).__init__()
-        self.step_size = 1e-10
+        self.step_size = 1e-4
         # self.discount = 0.99
-        self.gamma = 0.99
+        self.gamma = 0.95
         # self.epsilon = 0.9
 
         self.conv1 = nn.Conv2d(9, 3, (11, 1), padding=1)

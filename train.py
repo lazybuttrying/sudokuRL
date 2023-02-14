@@ -83,7 +83,7 @@ if __name__ == "__main__":
         if ep % 100 == 0:
             print(ep)
             print(rewards)
-        elif 3 < log["length"] < LEFT_TIMES:
+        elif 10 < log["length"] < LEFT_TIMES:
             print(ep)
             print(log)
             env.env.printBoard(printing=True)

@@ -29,6 +29,7 @@ class SudokuEnv(gym.Env):
         self.left_times -= 1
 
         truncated = self.left_times <= 0
+        done = False
         reward = -0.01
 
         if action == 0:
@@ -48,13 +49,16 @@ class SudokuEnv(gym.Env):
             if not changed:
                 reward = -self.left_times
                 truncated = True
+            else:
+                self.state[0] = self.state[1]
+                self.state[1] = self.state[2]
+                self.state[2] = self.env.board
+                # self.state[2][self.x][self.y][0] += 10
 
-        self.state[0] = self.state[1]
-        self.state[1] = self.state[2]
-        self.state[2] = self.env.board
-        # self.state = torch.stack([self.state, self.env.board], dim=0)[1:]
+        if reward == 1:
+            reward = self.left_times
+            done = True
 
-        done = reward == 1
         return self.state, reward, truncated, done, {}
 
     def reset(self, type=None):
