@@ -14,9 +14,9 @@ extern "C" {
         for (i = 0; i < 9; i++) {
             for (j = 0; j < 9; j++) {
                 if (sudoku[i][j][0])
-                    rtotal[j] = 1;
+                    rtotal[sudoku[i][j][0]] = 1;
                 if (sudoku[j][i][0])
-                    ctotal[j] = 1;                
+                    ctotal[sudoku[j][i][0]] = 1;                
             }
             
             rsum=0;
@@ -41,7 +41,7 @@ extern "C" {
                 for (int k=0; k<3; k++) {
                     for (int l=0; l<3; l++) {
                         if (sudoku[i*3+k][j*3+l][0])
-                            ztotal[k*3+l] = 1;
+                            ztotal[sudoku[i*3+k][j*3+l][0]] = 1;
                     }
                 }
 

@@ -4,6 +4,7 @@ from random import sample
 from copy import deepcopy
 import ctypes
 import numpy as np
+import os
 
 c = ctypes.CDLL("./environment/c/sudoku.so")
 
@@ -12,7 +13,7 @@ class Sudoku:
     def __init__(self, device):
         Sudoku.sayHi()
         self.device = device
-
+        os.makedirs("environment/data", exist_ok=True)
         self.answer = torch.tensor([])
         self.fixed = torch.ones(9, 9)
         self.board = torch.tensor([])
@@ -65,7 +66,7 @@ class Sudoku:
 
     def generateQue(self):
         squares = self.side * self.side
-        empties = squares * 3//4
+        empties = squares * 1//8
         for p in sample(range(squares), empties):
             self.board[p//self.side][p % self.side] = 0
         self.fixed = self.board.clone()
@@ -81,7 +82,7 @@ class Sudoku:
         return result
 
     def updateBoard(self, value) -> bool:
-        x, y, value = value["x"], value["y"], value["v"]+1
+        x, y, value = value["x"], value["y"], value["v"]-3
 
         if self.fixed[x][y]:
             return False

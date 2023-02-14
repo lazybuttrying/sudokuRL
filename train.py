@@ -1,12 +1,13 @@
 import torch
 import pandas as pd
 # from io import StringIO
-from environment.env import SudokuEnv
+from environment.env import SudokuEnv, LEFT_TIMES
 from model.model import ActorCritic
 from model.a2c import run_episode, update_params
 import gc
 import random
-import wandb
+import os
+# import wandb
 
 
 def parsing_args():
@@ -40,16 +41,18 @@ def gpu_preprocess(device):
 if __name__ == "__main__":
 
     args = parsing_args()
-    gpu_preprocess(args.device)
+    # gpu_preprocess(args.device)
 
     env = SudokuEnv({"device": args.device})
 
     model = ActorCritic().to(args.device)
+    os.makedirs("asset", exist_ok=True)
 
-    wandb.init(project="sudoku", entity="koios")
-    wandb.watch(model)
+    # wandb.init(project="sudoku", entity="koios")
+    # wandb.watch(model)
 
     state = env.reset()
+    env.env.printBoard(printing=True)
     loss = 9999999
     for ep in range(args.epoch):
         log = {
@@ -69,12 +72,21 @@ if __name__ == "__main__":
             model.optimizer, values, log_probs, rewards,
             gamma=model.gamma
         )
-        log["actor_loss_x"] = actor_loss["x"]
-        log["actor_loss_y"] = actor_loss["y"]
-        log["actor_loss_v"] = actor_loss["v"]
+
+        # log["actor_loss_x"] = actor_loss["x"]
+        # log["actor_loss_y"] = actor_loss["y"]
+        # log["actor_loss_v"] = actor_loss["v"]
 
         log["length"] = len(rewards)
         log["reward"] = sum(rewards)
+
+        if ep % 100 == 0:
+            print(ep)
+            print(rewards)
+        elif 10 < log["length"] < LEFT_TIMES:
+            print(ep)
+            print(log)
+            env.env.printBoard(printing=True)
 
         # log["last_board"] = pd.read_csv(StringIO(env.env.printBoard(printing=False)), sep=",")
 
@@ -82,12 +94,12 @@ if __name__ == "__main__":
         torch.cuda.empty_cache()
         gc.collect()
 
-        if loss > log["total_loss"]:
-            torch.save(model.state_dict(),
-                       f"./asset/model_{ep}_{log['total_loss']}.pth")
-            loss = log["total_loss"]
+        # if loss > log["total_loss"]:
+        #     torch.save(model.state_dict(),
+        #                f"./asset/model_{ep}_{log['total_loss']}.pth")
+        #     loss = log["total_loss"]
 
-        wandb.log(log, step=ep)
+        # wandb.log(log, step=ep)
         torch.save(model.state_dict(),
                    f"./asset/model_last.pth")
         del log
