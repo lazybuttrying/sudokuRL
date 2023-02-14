@@ -27,7 +27,6 @@
     - I don't tell the rule of sudoku to agent
     - As result, It can fill the empty cell but rarely change the filled numbers (not fixed number). It failed to find the rule.
 
-$ $
 
 - Environment setting
   - git `commit strategy`
@@ -44,3 +43,4 @@ $ $
 - Advantage
 - Entropy
 - Multi-Action (branching): $a= (x, y, value)$
+- How to avoid the identical result during many epochs
