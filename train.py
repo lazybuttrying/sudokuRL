@@ -1,7 +1,8 @@
 import torch
 import pandas as pd
 # from io import StringIO
-from environment.env import SudokuEnv, LEFT_TIMES
+from environment.env import SudokuEnv
+from config import LEFT_TIMES
 from model.model import ActorCritic
 from model.a2c import run_episode, update_params
 import gc
@@ -13,7 +14,7 @@ import os
 def parsing_args():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--device", type=str, default="cpu")
+    parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--epoch", type=int, default=90000)
     parser.add_argument("--epsilon", type=float, default=0.99)
 
@@ -41,7 +42,7 @@ def gpu_preprocess(device):
 if __name__ == "__main__":
 
     args = parsing_args()
-    # gpu_preprocess(args.device)
+    gpu_preprocess(args.device)
 
     env = SudokuEnv({"device": args.device})
 

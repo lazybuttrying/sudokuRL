@@ -6,6 +6,8 @@ import ctypes
 import numpy as np
 import os
 
+from config import MAX_SIZE, MAX_SCORE, BOARD_BASE
+
 c = ctypes.CDLL("./environment/c/sudoku.so")
 
 
@@ -15,10 +17,10 @@ class Sudoku:
         self.device = device
         os.makedirs("environment/data", exist_ok=True)
         self.answer = torch.tensor([])
-        self.fixed = torch.ones(9, 9)
+        self.fixed = torch.ones(MAX_SIZE, MAX_SIZE)
         self.board = torch.tensor([])
 
-        self.base = 3
+        self.base = BOARD_BASE
         self.side = self.base*self.base
 
     def sayHi():
@@ -66,7 +68,7 @@ class Sudoku:
 
     def generateQue(self):
         squares = self.side * self.side
-        empties = squares * 1//8
+        empties = squares * 1//4
         for p in sample(range(squares), empties):
             self.board[p//self.side][p % self.side] = 0
         self.fixed = self.board.clone()
@@ -105,7 +107,7 @@ if __name__ == "__main__":
         print("ex - 2 3 9")
         x, y, value = map(int, input().split())
 
-        if not (0 <= x < 9 and 0 <= y < 9 and 0 < value < 10):
+        if not (0 <= x < MAX_SIZE and 0 <= y < MAX_SIZE and 0 < value <= MAX_SIZE):
             print("Wrong input. Try Again")
             continue
 

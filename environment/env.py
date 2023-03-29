@@ -2,9 +2,9 @@ import gym
 import torch
 import numpy as np
 from environment.board import Sudoku
+from config import LEFT_TIMES, MAX_SIZE, MAX_SCORE
 import os
 
-LEFT_TIMES = 200
 
 
 class SudokuEnv(gym.Env):
@@ -20,7 +20,7 @@ class SudokuEnv(gym.Env):
         #     "y": gym.spaces.Discrete(9),
         #     "v": gym.spaces.Discrete(9)
         # })
-        self.action_space = gym.spaces.Discrete(13)
+        self.action_space = gym.spaces.Discrete(4+MAX_SIZE)
         # self.observation_space = gym.spaces.Box(
         #     # np.array(self.env.reset()),
         #     shape=(9, 9, 1), high=9, low=1)
@@ -33,19 +33,19 @@ class SudokuEnv(gym.Env):
         reward = -0.01
 
         if action == 0:
-            self.x = (self.x+1) % 9
+            self.x = (self.x+1) % MAX_SIZE
         elif action == 1:
-            self.x = (self.x-1) % 9
+            self.x = (self.x-1) % MAX_SIZE
         elif action == 2:
-            self.y = (self.y+1) % 9
+            self.y = (self.y+1) % MAX_SIZE
         elif action == 3:
-            self.y = (self.y-1) % 9
+            self.y = (self.y-1) % MAX_SIZE
         else:
             changed = self.env.updateBoard({
                 "x": self.x, "y": self.y, "v": action
             })
             score = self.env.calcScore()
-            reward = score/27.0 if score else -0.01
+            reward = score/MAX_SCORE if score else -0.01
             if not changed:
                 reward = -self.left_times
                 truncated = True

@@ -13,17 +13,17 @@ class ActorCritic(nn.Module):
         self.gamma = 0.95
         # self.epsilon = 0.9
 
-        self.conv1 = nn.Conv2d(9, 3, (11, 1), padding=1)
-        self.conv2 = nn.Conv2d(3, 81, (3, 5), padding=1)
+        self.conv1 = nn.Conv2d(4, 3, (4, 1), padding=1)
+        self.conv2 = nn.Conv2d(3, 16, (2, 2), padding=1)
         # self.conv3 = nn.Conv1d(729, 364, 1, stride=2, padding=1)
         self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.actor_fc1 = nn.Linear(243, 13)
+        self.actor_fc1 = nn.Linear(768, 4+4)
         # self.actor_x_fc1 = nn.Linear(243, 9)
         # self.actor_y_fc1 = nn.Linear(243, 9)
         # self.actor_v_fc1 = nn.Linear(243, 9)
 
-        self.l3 = nn.Linear(243, 81)
-        self.critic_fc1 = nn.Linear(81, 1)
+        self.l3 = nn.Linear(768, 16)
+        self.critic_fc1 = nn.Linear(16, 1)
 
         self.optimizer = torch.optim.RAdam(
             self.parameters(), lr=self.step_size,)

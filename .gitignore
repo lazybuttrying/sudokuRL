@@ -6,3 +6,11 @@
 *.so
 */test.*
 *.pkl
+
+include/
+bin/
+lib/
+lib64
+sudoku/
+share/
+py*
