@@ -8,9 +8,9 @@ extern "C" {
         int score = 0;
         
         int i=0, j=0;
-        int rtotal[MAX_SIZE] = {0,};
-        int ctotal[MAX_SIZE] = {0,};
-        int ztotal[MAX_SIZE] = {0,};
+        int rtotal[MAX_SIZE+1] = {0,};
+        int ctotal[MAX_SIZE+1] = {0,};
+        int ztotal[MAX_SIZE+1] = {0,};
         int rsum=0, csum=0, zsum=0;
 
         for (i = 0; i < MAX_SIZE; i++) {
@@ -24,7 +24,7 @@ extern "C" {
             rsum=0;
             csum=0;
 
-            for (j = 0; j < MAX_SIZE; j++) {
+            for (j = 1; j <= MAX_SIZE; j++) {
                 rsum += rtotal[j];
                 csum += ctotal[j];
                 rtotal[j] = 0;
@@ -48,7 +48,7 @@ extern "C" {
                 }
 
                 zsum = 0;
-                for (int k=0; k<MAX_SIZE; k++) {
+                for (int k=1; k<=MAX_SIZE; k++) {
                     zsum += ztotal[k];
                     ztotal[k]=0;
                 }

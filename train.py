@@ -52,9 +52,8 @@ if __name__ == "__main__":
     # wandb.init(project="sudoku", entity="koios")
     # wandb.watch(model)
 
-    state = env.reset()
-    env.env.printBoard(printing=True)
     loss = 9999999
+    before_success = 0
     for ep in range(args.epoch):
         log = {
             # "total_loss": [],
@@ -66,39 +65,31 @@ if __name__ == "__main__":
             # "reward": [],
         }
 
-        values, log_probs, rewards = run_episode(env, model,
-                                                 {"epsilon": args.epsilon})
+        state = env.reset()
+        # print("before")
+        # env.env.printBoard(printing=True)
+        # print(ep, "=====================")
+        # with torch.autograd.detect_anomaly():
+        values, log_probs, rewards, done = run_episode(env, model,
+                                                       {"epsilon": args.epsilon})
 
         log["total_loss"], actor_loss, log["critic_loss"] = update_params(
             model.optimizer, values, log_probs, rewards,
             gamma=model.gamma
         )
 
-        # log["actor_loss_x"] = actor_loss["x"]
-        # log["actor_loss_y"] = actor_loss["y"]
-        # log["actor_loss_v"] = actor_loss["v"]
-
         log["length"] = len(rewards)
         log["reward"] = sum(rewards)
 
-        if ep % 100 == 0:
-            print(ep)
-            print(rewards)
-        elif 10 < log["length"] < LEFT_TIMES:
-            print(ep)
-            print(log)
-            env.env.printBoard(printing=True)
-
-        # log["last_board"] = pd.read_csv(StringIO(env.env.printBoard(printing=False)), sep=",")
+        if done:
+            print(ep, ep-before_success, (env.x, env.y), log["reward"])
+            before_success = ep
+            # env.env.printBoard(printing=True)
+            print("--------------------------------------------------------")
 
         del values, rewards, log_probs, actor_loss
         torch.cuda.empty_cache()
         gc.collect()
-
-        # if loss > log["total_loss"]:
-        #     torch.save(model.state_dict(),
-        #                f"./asset/model_{ep}_{log['total_loss']}.pth")
-        #     loss = log["total_loss"]
 
         # wandb.log(log, step=ep)
         torch.save(model.state_dict(),
